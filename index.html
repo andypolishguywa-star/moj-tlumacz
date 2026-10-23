@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mój tłumacz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2efff;
+      text-align: center;
+      padding: 40px 15px;
+    }
+    .box {
+      background: white;
+      max-width: 400px;
+      margin: auto;
+      padding: 25px;
+      border-radius: 20px;
+    }
+    input, button {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      font-size: 16px;
+      border-radius: 10px;
+    }
+    input { border: 1px solid #ccc; }
+    button {
+      background: #7755dd;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #wynik { margin-top: 20px; font-size: 20px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>📚 Mój tłumacz</h1>
+    <p>Angielski → Polski</p>
+
+    <input id="slowo" placeholder="Wpisz słowo po angielsku">
+
+    <button onclick="tlumacz()">Przetłumacz</button>
+
+    <div id="wynik"></div>
+  </div>
+
+  <script>
+    async function tlumacz() {
+      const slowo = document.getElementById("slowo").value.trim();
+      const wynik = document.getElementById("wynik");
+
+      if (!slowo) {
+        wynik.textContent = "Najpierw wpisz słowo!";
+        return;
+      }
+
+      wynik.textContent = "Tłumaczę...";
+
+      try {
+        const url =
+          "https://api.mymemory.translated.net/get?q=" +
+          encodeURIComponent(slowo) +
+          "&langpair=en|pl";
+
+        const odpowiedz = await fetch(url);
+        const dane = await odpowiedz.json();
+
+        if (dane.responseStatus === 200) {
+          wynik.textContent =
+            "Tłumaczenie: " +
+            dane.responseData.translatedText;
+        } else {
+          wynik.textContent = "Nie udało się przetłumaczyć.";
+        }
+      } catch (blad) {
+        wynik.textContent =
+          "Błąd połączenia. Spróbuj ponownie.";
+      }
+    }
+  </script>
+</body>
+</html>
